@@ -35,6 +35,17 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python -u script.py
 
+      - name: Upload VOX diagnostic page
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vox-page-diagnostic
+          path: |
+            vox_debug.html
+            vox_debug.png
+          if-no-files-found: warn
+          retention-days: 3
+
       - name: Save notified showtimes
         if: success()
         run: |
