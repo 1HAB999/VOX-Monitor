@@ -140,6 +140,7 @@ def find_target_max_showtimes(driver):
 
 
 def main():
+    SENT_FILE.touch(exist_ok=True)
     sent_ids = load_sent_ids()
     driver = make_browser()
 
