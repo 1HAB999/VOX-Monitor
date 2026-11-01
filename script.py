@@ -4,7 +4,7 @@ import urllib.parse
 
 token = os.environ["TELEGRAM_BOT_TOKEN"]
 
-chat_id = "1131645165"
+chat_id = os.environ["TELEGRAM_CHAT_ID"]
 
 message = "VOX Monitor: Telegram connection successful!"
 
