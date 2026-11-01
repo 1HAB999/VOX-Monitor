@@ -72,10 +72,12 @@ def save_sent_id(show_id):
 def find_target_max_showtimes(driver):
     driver.get(VOX_URL)
     WebDriverWait(driver, 30).until(
-        EC.presence_of_element_located(
-            (By.CSS_SELECTOR, "article.movie-compare")
-        )
+        lambda browser: browser.execute_script("return document.readyState") == "complete"
     )
+    print("VOX page title:", driver.title)
+    print("VOX final URL:", driver.current_url)
+    print("VOX page text preview:", driver.find_element(By.TAG_NAME, "body").text[:5000])
+    print("VOX HTML preview:", driver.page_source[:12000])
 
     articles = driver.find_elements(By.CSS_SELECTOR, "article.movie-compare")
     print(f"Loaded VOX showtimes page. Found {len(articles)} movie entries.")
