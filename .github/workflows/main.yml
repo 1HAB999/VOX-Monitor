@@ -23,5 +23,5 @@ jobs:
 
       - name: Run Python test
         env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.9143217054:AAEoYm1BN58j-Hs-hochKAwxkdthh2BdK68 }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         run: python script.py
