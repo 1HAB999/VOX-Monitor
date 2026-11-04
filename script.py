@@ -17,7 +17,7 @@ TARGET_DATE = "20261225"
 TARGET_DATE_LABEL = "Friday, 25 December 2026"
 VOX_URL = (
     "https://egy.voxcinemas.com/showtimes"
-    "?c=city-centre-almaza&d=" + TARGET_DATE
+    "?c=city-centre-almaza&m=avengers-doomsday-infinity-vision&d=" + TARGET_DATE
 )
 SENT_FILE = Path("sent.txt")
 
@@ -74,13 +74,24 @@ def find_target_max_showtimes(driver):
     WebDriverWait(driver, 30).until(
         lambda browser: browser.execute_script("return document.readyState") == "complete"
     )
+    page_text = driver.find_element(By.TAG_NAME, "body").text
     print("VOX page title:", driver.title)
     print("VOX final URL:", driver.current_url)
-    print("VOX page text preview:", driver.find_element(By.TAG_NAME, "body").text[:5000])
-    print("VOX HTML preview:", driver.page_source[:12000])
+
+    if "No showtimes could be found" in page_text:
+        print("VOX confirms there are currently no showtimes for the selected cinema, movie, and date.")
+        return []
 
     articles = driver.find_elements(By.CSS_SELECTOR, "article.movie-compare")
-    print(f"Loaded VOX showtimes page. Found {len(articles)} movie entries.")
+    print(f"Loaded filtered VOX showtimes page. Found {len(articles)} movie entries.")
+
+    if not articles:
+        driver.save_screenshot("vox_debug.png")
+        Path("vox_debug.html").write_text(driver.page_source, encoding="utf-8")
+        raise RuntimeError(
+            "VOX page loaded, but its showtime layout was not recognized. "
+            "No alert was sent; inspect the vox-page-diagnostic artifact."
+        )
 
     matching_articles = []
     for article in articles:
@@ -96,14 +107,7 @@ def find_target_max_showtimes(driver):
             matching_articles.append((article, title))
 
     if not matching_articles:
-        print(
-            "Target movie is not listed for this date yet, or VOX changed "
-            "its page layout. No alert will be sent."
-        )
-        driver.save_screenshot("vox_debug.png")
-        Path("vox_debug.html").write_text(
-            driver.page_source, encoding="utf-8"
-        )
+        print("No matching target movie entry was found in the filtered showtime results. No alert will be sent.")
         return []
 
     found = []
