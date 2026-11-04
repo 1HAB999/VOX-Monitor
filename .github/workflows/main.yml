@@ -2,6 +2,8 @@ name: VOX MAX Seat Monitor
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "*/5 * * * *"
 
 permissions:
   contents: write
